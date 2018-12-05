@@ -89,6 +89,8 @@ public class GestorEstructuraSGBD {
     
     public void eliminarEstructura(){
         try{
+            
+            //Para eliminar las tablas sin problemas debemos eliminar las constraints con DELETE CONSTRAINT.
             st=con.createStatement();
             String tablas[] = new String[5];
             
@@ -123,27 +125,29 @@ public class GestorEstructuraSGBD {
     public void modificacionTablas(String SqlType){
         try{
             
+            
+            //Recomendable utilizar primero el comando insert, después el update y después el delete
             String modificar = "update";
             String eliminar = "delete";
             String insertar ="insert";
             st = con.createStatement();
         
             if (SqlType.equalsIgnoreCase(modificar)){
-                modificar = "UPDATE Sector SET sector = 'Terciario' WHERE idSector = 4";
+                modificar = "UPDATE Sector SET sector = 'Tecnología' WHERE idSector = 1";
                 st.executeUpdate(modificar);
                 System.out.println("La opción " + SqlType + " fue correctamente ejecutada");
             
             }
         
             else if(SqlType.equalsIgnoreCase(eliminar)){
-                eliminar = "DELETE FROM Articulo WHERE idArticulo = '7'";
+                eliminar = "DELETE FROM Articulo WHERE idSector = '1'";
                 st.executeUpdate(eliminar);
                 System.out.println("La opción " + SqlType + " fue correctamente ejecutada");
               
             }
             
             else if(SqlType.equalsIgnoreCase(insertar)){
-                insertar = "INSERT INTO Articulo VALUES (null, 4, 'Tablet FOS');";
+                insertar = "INSERT INTO Sector VALUES (1, 'Tecnologia');";
                         
                 st.executeUpdate(insertar);
                 System.out.println("La opción " + SqlType + " fue correctamente ejecutada");
@@ -212,7 +216,7 @@ public class GestorEstructuraSGBD {
     }
     
     public ArrayList<Articulo> obtenerArticuloPorId(int id){
-                try{
+         try{
         
             ArrayList<Articulo> lista = new ArrayList();
             String query = "SELECT idArticulo,nombreArticulo FROM ARTICULO WHERE idArticulo = ?;";
@@ -222,7 +226,7 @@ public class GestorEstructuraSGBD {
         
             rs = pst.executeQuery();
             while(rs.next()){
-                lista.add(new Articulo(rs.getString("idArticulo")));
+                lista.add(new Articulo(rs.getString("idArticulo"))) //También podemos utilizar el comando rs.getInt(1);
                 System.out.println("Articulo agregado");
             }
         
@@ -243,14 +247,14 @@ public class GestorEstructuraSGBD {
         boolean creado = false;
         
         //Crear y eliminar la estructura
-        //ge.eliminarEstructura();
+        ge.eliminarEstructura();
         ge.crearEstructura();
         creado = true;
         
         
       
         //Modificar tablas
-        /*System.out.println("Introduce la opción que quieras realizar (insert,update o delete)");
+        System.out.println("Introduce la opción que quieras realizar (insert,update o delete)");
             
         String SqlType = entrada.next();
         ge.modificacionTablas(SqlType);
@@ -258,16 +262,17 @@ public class GestorEstructuraSGBD {
         //Recuperar datos
         if(creado==true){
             ge.recuperarDatos();
+            
+            //Obtener articulos por descripcion
+            ge.obtenerArticulosPorDescripcion("Tablet");
+            
+            //Obtener articulos por id
+            ge.obtenerArticuloPorId(1);
         }
         else{
             System.out.println("Las tablas no fueron creadas");
         }
-            
-        //Obtener articulos por descripcion
-        ge.obtenerArticulosPorDescripcion("Tablet");
-            
-        //Obtener articulos por id
-        ge.obtenerArticuloPorId(1);*/
+          
             
         //Cerrar conexión
         try{
